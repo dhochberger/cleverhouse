@@ -1,0 +1,56 @@
+services:
+  - postgres:12.2-alpine
+variables:
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST_AUTH_METHOD: trust
+  POSTGRES_HOST: postgres
+
+stages:
+  - test
+  - deploy
+
+
+test_database:
+  stage: test
+  image: python:latest
+  script:
+    - cd bd/user/
+    - pip install psycopg2
+    - python test.py
+
+test_node:
+  stage: test
+  image: node:14
+  script:
+    - cd backend/
+    - npm i
+    - npm run db:create
+    - npm run db:migrate
+    - npm run test
+
+test_react:
+  stage: test
+  image: node:16
+  script:
+    - cd mobileapp/
+    - npm i --legacy-peer-deps
+    - npm run test
+
+deploy_staging:
+  stage: deploy
+  image: linuxserver/openssh-server
+  script:
+    - 'which ssh-agent || ( apt-get install -qq openssh-client )'
+    - eval $(ssh-agent -s)
+    - echo $SSH_PRIVATE_KEY | base64 -d > key.pem
+    - ssh-add <(cat key.pem)
+    - mkdir -p ~/.ssh
+    - chmod 400 ~/.ssh
+    - cat key.pem >  ~/.ssh/ssh_key
+    - chmod 600 ~/.ssh/ssh_key
+    - ssh-keygen -f ~/.ssh/ssh_key -y > ~/.ssh/key
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh -i ~/.ssh/ssh_key ec2-user@3.18.218.0 "cd && rm -rf cleverhouse && git clone https://gitlab.com/Ayna_/cleverhouse.git && ls && cd cleverhouse && sudo systemctl stop docker && sudo systemctl start docker && docker-compose up -d && exit"
+  only:
+    - master

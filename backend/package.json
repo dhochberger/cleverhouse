@@ -1,0 +1,55 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon src/app.js",
+    "test": "mocha --timeout 10000 --exit",
+    "production": "cross-env NODE_ENV='production' node src/index.js",
+    "dev": "cross-env NODE_ENV='development' nodemon src/app.js",
+    "db:create": "sequelize-cli db:create",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:g:migration": "sequelize-cli migration:generate --name",
+    "db:g:seed": "sequelize-cli seed:generate --name",
+    "db:seeds": "sequelize-cli db:seed:all",
+    "db:drop": "sequelize-cli db:drop",
+    "db:drop:test": "cross-env NODE_ENV='test' sequelize-cli db:drop",
+
+    "test:users": "mocha --timeout 10000 --exit",
+    "test:devices": "mocha --timeout 10000 test/device.js --exit",
+    "test:houses": "mocha --timeout 10000 test/house.js --exit",
+    "test:userismain": "mocha --timeout 10000 test/userismain.js --exit",
+    "test:userdevices": "mocha --timeout 10000 test/userdevices.js --exit",
+    "test:housedevices": "mocha --timeout 10000 test/housedevices.js --exit"
+    
+    
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "crypto": "^1.0.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "secure-random": "^1.1.2",
+    "sequelize": "^6.5.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "mocha": "^9.0.2",
+    "nodemon": "^2.0.7",
+    "sequelize-cli": "^6.2.0"
+  }
+}
